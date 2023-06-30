@@ -1,8 +1,10 @@
+/venv/
 /myvenv/
 __pycache__
 /next*
 /tweetlog
 /twitter_credentials.py
 /twitter_credentials.json
+*.pyc
 *.swp
 *egg-info

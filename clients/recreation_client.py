@@ -14,6 +14,9 @@ class RecreationClient:
     AVAILABILITY_ENDPOINT = (
         BASE_URL + "/api/camps/availability/campground/{park_id}/month"
     )
+    AVAILABILITY_URL = (
+        BASE_URL + "/camping/campgrounds/{park_id}/availability"
+    )
     MAIN_PAGE_ENDPOINT = BASE_URL + "/api/camps/campgrounds/{park_id}"
 
     headers = {"User-Agent": user_agent.generate_user_agent() }
@@ -34,6 +37,10 @@ class RecreationClient:
             cls.MAIN_PAGE_ENDPOINT.format(park_id=park_id), {}
         )
         return resp["campground"]["facility_name"]
+
+    @classmethod
+    def get_booking_url(cls, park_id):
+        return cls.AVAILABILITY_URL.format(park_id=park_id)
 
     @classmethod
     def _send_request(cls, url, params):

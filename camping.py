@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/env python3
 
 import json
@@ -250,13 +249,21 @@ def generate_human_output(
     if has_availabilities:
         out.insert(
             0,
-            "there are campsites available from {start} to {end}!!!".format(
+            "[{ts}] There *are* campsites available from {start} to {end}.".format(
+                ts=formatter.format_date(datetime.now(), "%Y-%m-%d %H:%M:%S"),
                 start=start_date.strftime(DateFormat.INPUT_DATE_FORMAT.value),
                 end=end_date.strftime(DateFormat.INPUT_DATE_FORMAT.value),
             ),
         )
+
+        out.append("\nBooking URL(s):")
+        for park_id, info in info_by_park_id.items():
+            out.append(" - {}".format(RecreationClient.get_booking_url(park_id)))
+
     else:
-        out.insert(0, "There are no campsites available :(")
+        out.insert(0, "[{ts}] There are no campsites available".format(
+            ts=formatter.format_date(datetime.now(), "%Y-%m-%d %H:%M:%S")))
+
     return "\n".join(out), has_availabilities
 
 
@@ -272,7 +279,7 @@ def generate_json_output(info_by_park_id):
     return json.dumps(availabilities_by_park_id), has_availabilities
 
 
-def remove_comments(lines: list[str]) -> list[str]:
+def remove_comments(lines):
     new_lines = []
     for line in lines:
         if line.startswith("#"):  # Deal with comment as the first character
@@ -327,5 +334,5 @@ if __name__ == "__main__":
 
     if args.debug:
         LOG.setLevel(logging.DEBUG)
-
-    main(args.parks, json_output=args.json_output)
+    exit_code = int(not main(args.parks, json_output=args.json_output))
+    raise SystemExit(exit_code)
